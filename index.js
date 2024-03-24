@@ -1,9 +1,9 @@
-import dotenv from "dotenv";
-import express from "express";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
-import userRouters from "./routes/user.js";
-import bodyParser from "body-parser";
+const dotenv = require("dotenv");
+const express = require("express");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const userRouters = require("./routes/user.js");
+const bodyParser = require("body-parser");
 
 const app = express();
 dotenv.config();
@@ -31,3 +31,9 @@ let connectPort = async (port) => {
 connectPort(PORT);
 
 app.use("/user", userRouters);
+
+// Swagger automatic generate documentation
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

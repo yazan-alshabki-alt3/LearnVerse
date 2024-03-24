@@ -1,14 +1,14 @@
-import { Router } from "express";
+const { Router } = require("express");
 const router = Router();
-import protect from "../middlewares/authMiddleware.js";
-import userController from "../controllers/user.js";
-import {
+const protect = require("../middlewares/authMiddleware.js");
+const userController = require("../controllers/user.js");
+const {
   register_user_validator,
   login_user_validator,
   update_user_validator,
-} from "../middlewares/validator.js";
-import { validationHandler } from "../helpers/validation.js";
-import upload from "../utils/fileUpload.js";
+} = require("../middlewares/validator.js");
+const { validationHandler } = require("../helpers/validation.js");
+const upload = require("../utils/fileUpload.js");
 
 // ============= Register User =============
 router.post(
@@ -49,10 +49,10 @@ router.post("/search/name", protect, userController.getUsersByName);
 router.get("/login/:token/:id", userController.activateUser);
 
 // ============= Get All Users =============
-router.get("/all" , protect, userController.getAllUsers);
+router.get("/all", protect, userController.getAllUsers);
 
 // ============= Delete User Account =============
 router.delete("/delete/:id", protect, userController.deleteUser);
 
-const userRouters = router;
-export default userRouters;
+module.exports = router;
+

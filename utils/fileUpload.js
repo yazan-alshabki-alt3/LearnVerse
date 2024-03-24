@@ -1,4 +1,4 @@
-import multer from "multer";
+const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
@@ -49,4 +49,4 @@ const fileSizeFormatter = (bytes, decimal) => {
 };
 */
 //module.exports = { upload, fileSizeFormatter };
-export default upload;
+module.exports = upload;

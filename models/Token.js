@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import bcryptjs from "bcryptjs";
+const mongoose = require("mongoose");
+const bcryptjs = require("bcryptjs");
 const TokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,4 +20,4 @@ TokenSchema.pre("save", async function (next) {
   this.token = await bcryptjs.hash(this.token, salt);
 });
 const Token = mongoose.model("Token", TokenSchema);
-export default Token;
+module.exports = Token;

@@ -1,15 +1,15 @@
-import User from "../models/User.js";
-import Token from "../models/Token.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import authenticationWithGoogle from "../utils/sendEmail.js";
-import { isWebSiteRequest } from "../helpers/validation.js";
-import { v2 as cloudinary } from "cloudinary";
-import { titleCase } from "../helpers/validation.js";
-import dotenv from "dotenv";
+const User = require("../models/User.js");
+const Token = require("../models/Token.js");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const authenticationWithGoogle = require("../utils/sendEmail.js");
+const { isWebSiteRequest } = require("../helpers/validation.js");
+const cloudinary = require("cloudinary").v2;
+const { titleCase } = require("../helpers/validation.js");
+const dotenv = require("dotenv");
 dotenv.config();
-import fs from "fs";
+const fs = require("fs");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -388,4 +388,4 @@ const userController = {
   deleteUser,
   getAllUsers,
 };
-export default userController;
+module.exports = userController;

@@ -1,13 +1,13 @@
-import User from "../models/User.js";
-import { validationResult } from "express-validator";
-export const existingEmail = async (email) => {
+const User = require("../models/User.js");
+const { validationResult } = require("express-validator");
+const existingEmail = async (email) => {
   const check_email = await User.findOne({ email });
   if (check_email) {
     throw new Error("Email already exist.");
   }
   return true;
 };
-export const validatePhoto = (value, { req }) => {
+const validatePhoto = (value, { req }) => {
   if (req.files.length <= 0) {
     return true;
   }
@@ -24,7 +24,7 @@ export const validatePhoto = (value, { req }) => {
   }
   return true;
 };
-export const titleCase = async (name) => {
+const titleCase = async (name) => {
   return name
     ?.toLowerCase()
     ?.split(" ")
@@ -34,7 +34,7 @@ export const titleCase = async (name) => {
     .join(" ");
 };
 
-export const validationHandler = (values = []) => {
+const validationHandler = (values = []) => {
   return async (req, res, next) => {
     await Promise.all(values.map((value) => value.run(req)));
 
@@ -52,7 +52,7 @@ export const validationHandler = (values = []) => {
   };
 };
 
-export const isWebSiteRequest = (userAgent) => {
+const isWebSiteRequest = (userAgent) => {
   console.log(userAgent);
   if (/firefox/i.test(userAgent)) {
     return true;
@@ -69,4 +69,12 @@ export const isWebSiteRequest = (userAgent) => {
   } else {
     return false;
   }
+};
+
+module.exports = {
+  isWebSiteRequest,
+  validationHandler,
+  titleCase,
+  validatePhoto,
+  existingEmail,
 };

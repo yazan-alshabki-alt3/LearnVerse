@@ -1,5 +1,5 @@
-import nodeMailer from "nodemailer";
-import dotenv from "dotenv";
+const nodeMailer = require("nodemailer");
+const dotenv = require("dotenv");
 dotenv.config();
 
 const HTML_TEMPLATE = ({ userName, code, userId }) => {
@@ -124,7 +124,7 @@ const sendEmail = async (mailDetails, callback) => {
     console.log(err);
   }
 };
-export default async (email, userName, code, userId) => {
+module.exports = async (email, userName, code, userId) => {
   const options = {
     from: `LearnVerse < ${process.env.EMAIL} >`, // sender address
     to: email, // receiver email

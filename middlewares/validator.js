@@ -1,12 +1,12 @@
-import { body } from "express-validator";
+const { body } = require("express-validator");
 
-import {
+const {
   existingEmail,
   titleCase,
   validatePhoto,
-} from "../helpers/validation.js";
+} = require("../helpers/validation.js");
 
-export const register_user_validator = [
+const register_user_validator = [
   body("firstName")
     .exists()
     .withMessage("First Name is required")
@@ -40,7 +40,7 @@ export const register_user_validator = [
     .withMessage("Password must be at least 8 characters"),
 ];
 
-export const login_user_validator = [
+const login_user_validator = [
   body("email")
     .normalizeEmail()
     .exists()
@@ -56,7 +56,7 @@ export const login_user_validator = [
     .withMessage("Password must be at least 8 characters"),
 ];
 
-export const update_user_validator = [
+const update_user_validator = [
   body("firstName")
     .exists()
     .withMessage("First Name is required")
@@ -75,3 +75,8 @@ export const update_user_validator = [
     .custom(validatePhoto)
     .withMessage("Photo is required with correct type"),
 ];
+module.exports = {
+  update_user_validator,
+  login_user_validator,
+  register_user_validator,
+};
