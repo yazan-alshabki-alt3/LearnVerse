@@ -2,8 +2,8 @@ const swaggerAutogen = require('swagger-autogen')();
 
 const doc = {
   info: {
-    title: "Node js ِExpress+ MongoDB API",
-    description: "Node js ِExpress+ MongoDB API",
+    title: "LearnVerse APIS",
+    description: "Documentation about the APIS in our website  ",
   },
   host: "localhost:3000",
   schemes: ["http"],

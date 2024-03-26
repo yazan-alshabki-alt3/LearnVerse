@@ -24,7 +24,12 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please enter your password"],
+      required: [
+        function () {
+          return this.authenticated === "Regular";
+        },
+        "Please enter your password",
+      ],
       trim: true,
       minLength: [8, "Password must be up to 8 characters"],
     },
@@ -44,6 +49,10 @@ const userSchema = new mongoose.Schema(
     activated: {
       type: Boolean,
       default: false,
+    },
+    authenticated: {
+      type: String,
+      default: "Regular",
     },
   },
   { timestamps: true }
