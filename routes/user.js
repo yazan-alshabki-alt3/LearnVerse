@@ -54,5 +54,8 @@ router.get("/all", protect, userController.getAllUsers);
 // ============= Delete User Account =============
 router.delete("/delete/:id", protect, userController.deleteUser);
 
-module.exports = router;
+router.post("/forgot-password", userController.forgotPassword);
 
+router.post("/reset-password/:id", userController.resetPassword);
+
+module.exports = router;

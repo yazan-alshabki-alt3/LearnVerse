@@ -4,12 +4,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const authenticationWithGoogle = require("../utils/sendEmail.js");
+const resetThePasswordWithGoogle = require("../utils/resetPasswordEmail.js");
 const { isWebSiteRequest } = require("../helpers/validation.js");
 const cloudinary = require("cloudinary").v2;
 const { titleCase } = require("../helpers/validation.js");
 const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
+const { assert } = require("console");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -307,6 +309,7 @@ const activateUser = async (req, res) => {
   let token = req.params.token;
   try {
     let findToken = await Token.findOne({ userId: userId });
+
     if (findToken) {
       const isValid = await bcrypt.compare(token, findToken.token);
       if (isValid) {
@@ -315,6 +318,8 @@ const activateUser = async (req, res) => {
           { $set: { activated: true } },
           { new: true }
         );
+        // delete this token
+        await Token.deleteOne({ _id: findToken._id });
         res.redirect(`${process.env.URL_HOST}/user/login`);
       } else {
         return res.status(400).json({
@@ -375,7 +380,82 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+const forgotPassword = async (req, res) => {
+  const email = req.body.email;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+    const hashCode = crypto.randomBytes(32).toString("hex");
+    const newToken = await Token.create({
+      userId: user._id,
+      token: hashCode,
+      createdAt: Date.now(),
+    });
+    await resetThePasswordWithGoogle(
+      user.email,
+      user.firstName,
+      hashCode,
+      user._id
+    );
+    return res.status(201).json({
+      success: true,
+      message:
+        "Message successfully sent you can reset your password from your Gmail account !",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+};
 
+const resetPassword = async (req, res) => {
+  let userId = req.params.id;
+  let token = req.body.token;
+  let newPassword = req.body.password;
+  try {
+    let findToken = await Token.findOne({ userId: userId });
+    if (findToken) {
+      const isValid = await bcrypt.compare(token, findToken.token);
+      if (isValid) {
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+        const updateUser = await User.updateOne(
+          { _id: userId },
+          { $set: { password: hashPassword } },
+          { new: true }
+        );
+        await Token.deleteOne({ _id: findToken._id });
+
+        return res.status(201).json({
+          success: true,
+          message: "Password successfully updated !",
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid token !`,
+        });
+      }
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: `Token not found !`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+};
 const userController = {
   registerUser,
   loginUser,
@@ -387,5 +467,7 @@ const userController = {
   activateUser,
   deleteUser,
   getAllUsers,
+  forgotPassword,
+  resetPassword,
 };
 module.exports = userController;

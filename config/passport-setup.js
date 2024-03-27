@@ -18,7 +18,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://learnverse.onrender.com/auth/google/redirect",
+      callbackURL: "/auth/google/redirect",
       scope: ["profile", "email"], // Add 'email' to the scope
     },
     (accessToken, refreshToken, profile, done) => {
