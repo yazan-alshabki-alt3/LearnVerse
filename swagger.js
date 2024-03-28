@@ -1,11 +1,13 @@
-const swaggerAutogen = require('swagger-autogen')();
+const dotenv = require("dotenv");
+dotenv.config();
+const swaggerAutogen = require("swagger-autogen")();
 
 const doc = {
   info: {
     title: "LearnVerse APIS",
     description: "Documentation about the APIS in our website  ",
   },
-  host: "localhost:3000",
+  host: process.env.URL_HOST,
   schemes: ["http"],
 };
 
