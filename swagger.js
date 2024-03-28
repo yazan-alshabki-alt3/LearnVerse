@@ -7,8 +7,8 @@ const doc = {
     title: "LearnVerse APIS",
     description: "Documentation about the APIS in our website  ",
   },
-  host: process.env.URL_HOST,
-  schemes: ["http"],
+  host: process.env.HOST_FOR_SWAGGER,
+  schemes: ["https"],
 };
 
 const outputFile = "./swagger-output.json";
