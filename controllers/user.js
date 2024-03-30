@@ -108,16 +108,6 @@ const loginUser = async (req, res) => {
       expiresIn: "24h", // Token expires in 24 hour
     });
 
-    //Send HTTP-only
-    res.cookie("token", token, {
-      path: "/",
-      httpOnly: true,
-      // after (24 * 60 * 60 = 86400) = 1 day the token is expired
-      expires: new Date(Date.now() + 1000 * 86400),
-      sameSite: "none",
-      secure: true,
-    });
-
     // Send the token in the response
     return res.status(201).json({
       success: true,
@@ -138,30 +128,8 @@ const loginUser = async (req, res) => {
 
 // ================== Login Status ==================
 const loginStatus = async (req, res) => {
-  const userAgent = req.headers["user-agent"] || "";
-  if (isWebSiteRequest(userAgent)) {
-    const token = req.cookies.token;
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "User has not logged in",
-      });
-    }
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    if (verified) {
-      return res.status(200).json({
-        success: true,
-        message: "User has logged in",
-      });
-    } else {
-      return res.status(403).json({
-        success: false,
-        message: "User token is invalid",
-      });
-    }
-  } else {
+  try {
     const token = req.headers.authorization?.split(" ")[1];
-
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -180,6 +148,11 @@ const loginStatus = async (req, res) => {
         message: "User token is invalid",
       });
     }
+  } catch (err) {
+    return res.status(403).json({
+      success: false,
+      message: "User token is invalid ",
+    });
   }
 };
 
