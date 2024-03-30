@@ -225,7 +225,6 @@ const updateUser = async (req, res) => {
       data: userData,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong, try again later.",

@@ -75,8 +75,23 @@ const update_user_validator = [
     .custom(validatePhoto)
     .withMessage("Photo is required with correct type"),
 ];
+const translate_validator = [
+  body("language")
+    .exists()
+    .withMessage("language Name is required")
+    .notEmpty()
+    .withMessage("language cannot be empty")
+    .trim(),
+  body("text")
+    .exists()
+    .withMessage("text is required")
+    .notEmpty()
+    .withMessage("text cannot be empty")
+    .trim(),
+];
 module.exports = {
   update_user_validator,
   login_user_validator,
   register_user_validator,
+  translate_validator,
 };

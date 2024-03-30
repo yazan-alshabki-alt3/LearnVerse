@@ -2,14 +2,14 @@ const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const userRouters = require("./routes/user.js");
+const userRoutes = require("./routes/user.js");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
 const bodyParser = require("body-parser");
-const authRouters = require("./routes/auth-routes.js");
+const authRoutes = require("./routes/auth-routes.js");
 const session = require("express-session");
-
+const translateRoutes = require("./routes/translate.js");
 const app = express();
 dotenv.config();
 
@@ -43,9 +43,11 @@ let connectPort = async (port) => {
 };
 connectPort(PORT);
 // user actions
-app.use("/user", userRouters);
+app.use("/user", userRoutes);
 // authenticate with Google
-app.use("/auth", authRouters);
+app.use("/auth", authRoutes);
+// translate actions
+app.use("/translate", translateRoutes);
 
 // Swagger automatic generate documentation
 const swaggerUi = require("swagger-ui-express");
