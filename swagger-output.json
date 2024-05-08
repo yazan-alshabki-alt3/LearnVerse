@@ -5,10 +5,10 @@
     "description": "Documentation about the APIS in our website  ",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "learnverse.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/user/register": {
@@ -98,11 +98,6 @@
         "parameters": [
           {
             "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "user-agent",
             "in": "header",
             "type": "string"
           }
@@ -369,16 +364,10 @@
         }
       }
     },
-    "/user/reset-password/{token}/{id}": {
+    "/user/reset-password/{id}": {
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "id",
             "in": "path",
@@ -391,6 +380,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "token": {
+                  "example": "any"
+                },
                 "password": {
                   "example": "any"
                 }
@@ -430,6 +422,39 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/translate/": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "example": "any"
+                },
+                "language": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
           },
           "500": {
             "description": "Internal Server Error"
