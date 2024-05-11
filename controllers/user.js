@@ -439,24 +439,20 @@ const resetPassword = async (req, res) => {
 const orderPromotionToProfessor = async (req, res) => {
   let userId = req.body.id;
   let url;
+  if (req.files.length > 0) {
+    const result = await cloudinary.uploader.upload(req.files[0].path, {
+      resource_type: "image",
+    });
+    fs.unlinkSync(req.files[0].path);
+    url = result.secure_url;
+  }
   try {
-
     const user = await User.findById(userId);
     if (!user) {
       return res.status(400).json({
         success: false,
         message: "User not found, please signup",
       });
-    }
-
-    if (req.files.length > 0) {
-      const result = await cloudinary.uploader.upload(req.files[0].path, {
-        resource_type: "image",
-      });
-      console.log(req.files[0].path);
-
-      fs.unlinkSync(req.files[0].path);
-      url = result.secure_url;
     }
     const order = await Order.create({
       userId: userId,
