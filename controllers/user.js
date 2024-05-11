@@ -446,6 +446,7 @@ const orderPromotionToProfessor = async (req, res) => {
     fs.unlinkSync(req.files[0].path);
     url = result.secure_url;
   }
+  
   try {
     const user = await User.findById(userId);
     if (!user) {
