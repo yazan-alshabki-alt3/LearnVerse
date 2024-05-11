@@ -1,5 +1,6 @@
 const User = require("../models/User.js");
 const Token = require("../models/Token.js");
+const Order = require("../models/Order.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -11,7 +12,6 @@ const { titleCase } = require("../helpers/validation.js");
 const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
-const { assert } = require("console");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -190,6 +190,7 @@ const updateUser = async (req, res) => {
     });
     fs.unlinkSync(req.files[0].path);
     const url = result.secure_url;
+
     newUser = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -352,6 +353,9 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+
+// ================== Forgot Password ==================
+
 const forgotPassword = async (req, res) => {
   const email = req.body.email;
   try {
@@ -386,6 +390,7 @@ const forgotPassword = async (req, res) => {
     });
   }
 };
+// ================== Reset Password ==================
 
 const resetPassword = async (req, res) => {
   let userId = req.params.id;
@@ -428,6 +433,49 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+
+// ================== Order Promotion To Professor ==================
+
+const orderPromotionToProfessor = async (req, res) => {
+  let userId = req.body.id;
+  let url;
+  try {
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found, please signup",
+      });
+    }
+
+    if (req.files.length > 0) {
+      const result = await cloudinary.uploader.upload(req.files[0].path, {
+        resource_type: "image",
+      });
+      console.log(req.files[0].path);
+
+      fs.unlinkSync(req.files[0].path);
+      url = result.secure_url;
+    }
+    const order = await Order.create({
+      userId: userId,
+      image: url,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Order sent successfully !",
+    });
+
+
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+};
 const userController = {
   registerUser,
   loginUser,
@@ -441,5 +489,6 @@ const userController = {
   getAllUsers,
   forgotPassword,
   resetPassword,
+  orderPromotionToProfessor,
 };
 module.exports = userController;

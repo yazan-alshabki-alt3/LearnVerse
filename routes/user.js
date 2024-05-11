@@ -53,9 +53,16 @@ router.get("/all", protect, userController.getAllUsers);
 
 // ============= Delete User Account =============
 router.delete("/delete/:id", protect, userController.deleteUser);
-
+// ============= Forgot Password =============
 router.post("/forgot-password", userController.forgotPassword);
-
+// ============= Reset Password =============
 router.post("/reset-password/:id", userController.resetPassword);
+// ============= Order Promotion to Professor  =============
+router.post(
+  "/promotion-to-professor",
+  protect,
+  upload.array("photo", 1),
+  userController.orderPromotionToProfessor
+);
 
 module.exports = router;
