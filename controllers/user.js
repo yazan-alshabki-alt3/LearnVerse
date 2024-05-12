@@ -184,25 +184,24 @@ const getUser = async (req, res) => {
 // ================== Update User ==================
 const updateUser = async (req, res) => {
   let newUser = "";
-  if (req.files.length > 0) {
-    const result = await cloudinary.uploader.upload(req.files[0].path, {
+
+  if (!req.file) {
+    newUser = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+    };
+  } else {
+    let url;
+    const result = await cloudinary.uploader.upload(req.file.path, {
       resource_type: "image",
     });
-    fs.unlinkSync(req.files[0].path);
-    const url = result.secure_url;
-
+    url = result.secure_url;
     newUser = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       photo: url,
     };
-  } else {
-    newUser = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-    };
   }
-
   try {
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -443,6 +442,7 @@ const orderPromotionToProfessor = async (req, res) => {
     resource_type: "image",
   });
   url = result.secure_url;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
