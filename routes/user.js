@@ -34,7 +34,7 @@ router.get("/", protect, userController.getUser);
 router.patch(
   "/update-user",
   protect,
-  upload.array("photo", 1),
+  upload.single("photo"),
   validationHandler(update_user_validator),
   userController.updateUser
 );
