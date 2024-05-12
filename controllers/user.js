@@ -188,7 +188,6 @@ const updateUser = async (req, res) => {
     const result = await cloudinary.uploader.upload(req.files[0].path, {
       resource_type: "image",
     });
-    fs.unlinkSync(req.files[0].path);
     const url = result.secure_url;
 
     newUser = {
@@ -439,11 +438,13 @@ const resetPassword = async (req, res) => {
 const orderPromotionToProfessor = async (req, res) => {
   let userId = req.body.id;
   let url;
-  console.log(req.file.path);
-  const result = await cloudinary.uploader.upload(req.file.path, {
-    resource_type: "image",
-  });
-  url = result.secure_url;
+  console.log(req.files[0].path);
+  if (req.files.length > 0) {
+    const result = await cloudinary.uploader.upload(req.files[0].path, {
+      resource_type: "image",
+    });
+    url = result.secure_url;
+  }
 
   try {
     const user = await User.findById(userId);

@@ -40,7 +40,7 @@ const protect = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Something went wrong, try again later.",
+      message: "Please Log in !",
     });
   }
 };
