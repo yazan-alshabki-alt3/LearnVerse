@@ -61,7 +61,7 @@ router.post("/reset-password/:id", userController.resetPassword);
 router.post(
   "/promotion-to-professor",
   protect,
-  upload.array("photo", 1),
+  upload.single("photo"),
   userController.orderPromotionToProfessor
 );
 

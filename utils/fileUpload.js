@@ -1,15 +1,15 @@
 const multer = require("multer");
 
 const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
-    );
-  },
+  // destination: function (_req, _file, cb) {
+  //   cb(null, "uploads/");
+  // },
+  // filename: function (req, file, cb) {
+  //   cb(
+  //     null,
+  //     new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+  //   );
+  // },
 });
 
 function fileFilter(_req, file, cb) {
@@ -29,10 +29,10 @@ function fileFilter(_req, file, cb) {
 }
 
 const upload = multer({
-  storage,
-  limits: {
-    fileSize: 100 * 1024 * 1024, // 5 MB limit
-  },
+  storage: storage,
+  // limits: {
+  //   fileSize: 100 * 1024 * 1024, // 5 MB limit
+  // },
 });
 /*
 const fileSizeFormatter = (bytes, decimal) => {

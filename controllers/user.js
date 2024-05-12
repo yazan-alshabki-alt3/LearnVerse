@@ -439,15 +439,10 @@ const resetPassword = async (req, res) => {
 const orderPromotionToProfessor = async (req, res) => {
   let userId = req.body.id;
   let url;
-  console.log(req.files[0].path);
-  if (req.files.length > 0) {
-    const result = await cloudinary.uploader.upload(req.files[0].path, {
-      resource_type: "image",
-    });
-    fs.unlinkSync(req.files[0].path);
-    url = result.secure_url;
-  }
-
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    resource_type: "image",
+  });
+  url = result.secure_url;
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -463,9 +458,8 @@ const orderPromotionToProfessor = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Order sent successfully !",
+      data: order
     });
-
-
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({
