@@ -1,6 +1,8 @@
 const User = require("../models/User.js");
 const Token = require("../models/Token.js");
 const Order = require("../models/Order.js");
+const Question = require("../models/Question.js");
+const Grade = require("../models/Grade.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -20,6 +22,7 @@ cloudinary.config({
 });
 
 // ================== Register User ==================
+
 const registerUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -72,6 +75,7 @@ const registerUser = async (req, res) => {
 };
 
 // ================== Login User ==================
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -127,6 +131,7 @@ const loginUser = async (req, res) => {
 };
 
 // ================== Login Status ==================
+
 const loginStatus = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -157,6 +162,7 @@ const loginStatus = async (req, res) => {
 };
 
 // ================== Get User ==================
+
 const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -182,6 +188,7 @@ const getUser = async (req, res) => {
 };
 
 // ================== Update User ==================
+
 const updateUser = async (req, res) => {
   let newUser = "";
   if (req.files.length > 0) {
@@ -209,6 +216,7 @@ const updateUser = async (req, res) => {
       { new: true }
     );
 
+
     const userData = {
       _id: user._id,
       firstName: user.firstName,
@@ -232,6 +240,7 @@ const updateUser = async (req, res) => {
   }
 };
 // ================== Get User By Id ==================
+
 const getUserById = async (req, res) => {
   const userId = req.params.id;
   try {
@@ -256,6 +265,7 @@ const getUserById = async (req, res) => {
 };
 
 // ================== Get Users By Name ==================
+
 const getUsersByName = async (req, res) => {
   let userName = req.body.userName;
   userName = await titleCase(userName);
@@ -276,6 +286,7 @@ const getUsersByName = async (req, res) => {
 };
 
 // ================== Activate User ==================
+
 const activateUser = async (req, res) => {
   let userId = req.params.id;
   let token = req.params.token;
@@ -314,6 +325,7 @@ const activateUser = async (req, res) => {
 };
 
 // ================== Delete User Account ==================
+
 const deleteUser = async (req, res) => {
   const userId = req.params.id;
   try {
@@ -337,6 +349,7 @@ const deleteUser = async (req, res) => {
   }
 };
 // ================== Get All Users ==================
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -436,7 +449,7 @@ const resetPassword = async (req, res) => {
 // ================== Order Promotion To Professor ==================
 
 const orderPromotionToProfessor = async (req, res) => {
-  let userId = req.body.id;
+  let userId = req.user._id;
   let url;
   console.log(req.files[0].path);
   if (req.files.length > 0) {
@@ -447,13 +460,6 @@ const orderPromotionToProfessor = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found, please signup",
-      });
-    }
     const order = await Order.create({
       userId: userId,
       image: url,
@@ -461,17 +467,69 @@ const orderPromotionToProfessor = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Order sent successfully !",
+      data: order,
     });
 
 
   } catch (err) {
-    console.log(err.message);
     return res.status(500).json({
       success: false,
       message: "Something went wrong, try again later.",
     });
   }
 };
+
+const onlineTest = async (req, res) => {
+  const level = req.body.level;
+  const userId = req.user._id;
+  try {
+
+    const randomQuestions = await Question.aggregate([
+      { $match: { level: level } }, // Filter questions by the specific level
+      { $sample: { size: 10 } } // Get a random sample of 10 questions
+    ]);
+    return res.status(201).json({
+      success: true,
+      message: "Test sent successfully !",
+      data: randomQuestions,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+
+}
+
+// ============= Save Grade  =============
+
+const saveGrade = async (req, res) => {
+  const userId = req.user._id;
+  const testLevel = req.body.testLevel;
+  const grade = req.body.grade;
+  try {
+    const newGrade = await Grade.create({
+      userId: userId,
+      grade: grade,
+      testLevel: testLevel,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Grade sent successfully !",
+      data: newGrade,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+
+
+}
+
 const userController = {
   registerUser,
   loginUser,
@@ -486,5 +544,7 @@ const userController = {
   forgotPassword,
   resetPassword,
   orderPromotionToProfessor,
+  onlineTest,
+  saveGrade
 };
 module.exports = userController;

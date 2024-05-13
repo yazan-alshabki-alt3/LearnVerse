@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.js");
+const adminRoutes = require("./routes/admin.js");
+const teacherRoutes = require("./routes/teacher.js");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const passportSetup = require("./config/passport-setup");
@@ -42,12 +44,18 @@ let connectPort = async (port) => {
   }
 };
 connectPort(PORT);
+
 // user actions
 app.use("/user", userRoutes);
 // authenticate with Google
 app.use("/auth", authRoutes);
 // translate actions
 app.use("/translate", translateRoutes);
+// admin actions 
+app.use("/admin", adminRoutes);
+// teacher actions 
+app.use("/teacher", teacherRoutes);
+
 
 // Swagger automatic generate documentation
 const swaggerUi = require("swagger-ui-express");

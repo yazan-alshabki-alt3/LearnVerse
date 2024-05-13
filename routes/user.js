@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const protect = require("../middlewares/authMiddleware.js");
+const { protect, protectAdmin, protectTeacher } = require("../middlewares/authMiddleware.js");
 const userController = require("../controllers/user.js");
 const {
   register_user_validator,
@@ -28,7 +28,7 @@ router.post(
 router.get("/login-status", userController.loginStatus);
 
 // ============= Get User =============
-router.get("/", protect, userController.getUser); 
+router.get("/", protect, userController.getUser);
 
 // ============= Update User =============
 router.patch(
@@ -64,5 +64,21 @@ router.post(
   upload.array("photo", 1),
   userController.orderPromotionToProfessor
 );
+// ============= Online Test  =============
+router.post(
+  "/online-test",
+  protect,
+  userController.onlineTest
+);
+
+// ============= Save Grade  =============
+router.post(
+  "/save-grade",
+  protect,
+  userController.saveGrade
+);
+
+
+
 
 module.exports = router;
