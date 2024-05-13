@@ -28,7 +28,7 @@ router.post(
 router.get("/login-status", userController.loginStatus);
 
 // ============= Get User =============
-router.get("/", protect, userController.getUser);
+router.get("/", protect, userController.getUser); 
 
 // ============= Update User =============
 router.patch(
