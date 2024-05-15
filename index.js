@@ -14,10 +14,14 @@ const authRoutes = require("./routes/auth-routes.js");
 const session = require("express-session");
 const translateRoutes = require("./routes/translate.js");
 const app = express();
+const cors = require('cors');
+
+
 dotenv.config();
 
 // view engine
 app.use(cookieParser());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
