@@ -509,18 +509,33 @@ const saveGrade = async (req, res) => {
   const testLevel = req.body.testLevel;
   const grade = req.body.grade;
   try {
-    const newGrade = await Grade.create({
-      userId: userId,
-      grade: grade,
-      testLevel: testLevel,
-    });
-    return res.status(201).json({
-      success: true,
-      message: "Grade sent successfully !",
-      data: newGrade,
-    });
+    let gradeForUser = await Grade.findOne({ userId: userId, testLevel: testLevel });
+    
+    if (!gradeForUser) {
+      const newGrade = await Grade.create({
+        userId: userId,
+        grade: grade,
+        testLevel: testLevel,
+      });
+      return res.status(201).json({
+        success: true,
+        message: "Grade sent successfully !",
+        data: newGrade,
+      });
+    } else {
+      gradeForUser.grade = grade;
+      gradeForUser.save();
+
+      return res.status(201).json({
+        success: true,
+        message: "Grade updated successfully !",
+        data: gradeForUser,
+      });
+    }
+
 
   } catch (err) {
+    console.log(err.message);
     return res.status(500).json({
       success: false,
       message: "Something went wrong, try again later.",
