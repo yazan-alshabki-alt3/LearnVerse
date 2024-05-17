@@ -24,7 +24,6 @@ const register_user_validator = [
     .customSanitizer(titleCase),
 
   body("email")
-    .normalizeEmail()
     .exists()
     .withMessage("Email is required")
     .isEmail()
@@ -40,9 +39,9 @@ const register_user_validator = [
     .withMessage("Password must be at least 8 characters"),
 ];
 
+
 const login_user_validator = [
   body("email")
-    .normalizeEmail()
     .exists()
     .withMessage("Email is required")
     .isEmail()
