@@ -5,7 +5,7 @@ const swaggerAutogen = require("swagger-autogen")();
 const doc = {
   info: {
     title: "LearnVerse APIS",
-    description: "Documentation about the APIS in our website  ",
+    description: "Documentation about the APIS in LearnVerse website  ",
   },
   host: process.env.HOST_FOR_SWAGGER,
   schemes: ["https"],
