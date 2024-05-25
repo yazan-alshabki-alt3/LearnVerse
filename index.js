@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.js");
 const adminRoutes = require("./routes/admin.js");
 const teacherRoutes = require("./routes/teacher.js");
+const courseRoutes = require("./routes/course.js");
 const grammarCheckerRoutes = require("./routes/grammarChecker.js");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
@@ -62,7 +63,8 @@ app.use("/admin", adminRoutes);
 app.use("/teacher", teacherRoutes);
 // grammar checker
 app.use("/grammar-checker", grammarCheckerRoutes);
-
+// course actions 
+app.use("/course", courseRoutes);
 
 
 // Swagger automatic generate documentation

@@ -364,7 +364,7 @@ const getAllUsers = async (req, res) => {
       message: "Something went wrong, try again later.",
     });
   }
-};
+}
 
 // ================== Forgot Password ==================
 
