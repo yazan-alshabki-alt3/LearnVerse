@@ -502,6 +502,7 @@ const onlineTest = async (req, res) => {
 
 }
 
+
 // ============= Save Grade  =============
 
 const saveGrade = async (req, res) => {
@@ -510,7 +511,7 @@ const saveGrade = async (req, res) => {
   const grade = req.body.grade;
   try {
     let gradeForUser = await Grade.findOne({ userId: userId, testLevel: testLevel });
-    
+
     if (!gradeForUser) {
       const newGrade = await Grade.create({
         userId: userId,
@@ -545,6 +546,85 @@ const saveGrade = async (req, res) => {
 
 }
 
+
+// ============= Evaluation Test  =============
+
+const evaluationTest = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const test = [];
+    for (let level = 'A'.charCodeAt(0); level <= 'C'.charCodeAt(0); level++) {
+      const character = String.fromCharCode(level); // Output: A, B, C
+
+      const randomQuestions1 = await Question.aggregate([
+        { $match: { level: character + '1' } }, // Filter questions by the specific level
+        { $sample: { size: 2 } } // Get a random sample of 10 questions
+      ]);
+      test.push(...randomQuestions1);
+      const randomQuestions2 = await Question.aggregate([
+        { $match: { level: character + '2' } }, // Filter questions by the specific level
+        { $sample: { size: 2 } } // Get a random sample of 10 questions
+      ]);
+      test.push(...randomQuestions2);
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Evaluation test sent successfully !",
+      data: test,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+
+}
+
+// ============= Save Evaluation =============
+
+const saveEvaluation = async (req, res) => {
+  const userId = req.user._id;
+  const level = req.body.level;
+  try {
+
+    const user = await User.findById(userId);
+    if ((user.level[0] < level[0]) || (user.level[0] == level[0] && user.level[1] < level[1])) {
+      const newUser = {
+        level: level
+      };
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $set: newUser },
+        { new: true }
+      );
+      return res.status(201).json({
+        success: true,
+        message: "User evaluated successfully !",
+        data: user,
+      });
+    } else {
+      return res.status(201).json({
+        success: true,
+        message: "Old level is better than new one !",
+        data: user,
+      });
+    }
+
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+
+
+}
+
+
+
+
 const userController = {
   registerUser,
   loginUser,
@@ -560,6 +640,8 @@ const userController = {
   resetPassword,
   orderPromotionToProfessor,
   onlineTest,
-  saveGrade
+  saveGrade,
+  evaluationTest,
+  saveEvaluation
 };
 module.exports = userController;

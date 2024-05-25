@@ -70,15 +70,23 @@ router.post(
   protect,
   userController.onlineTest
 );
-
 // ============= Save Grade  =============
 router.post(
   "/save-grade",
   protect,
   userController.saveGrade
 );
-
-
-
+// ============= Evaluation Test  =============
+router.get(
+  "/evaluation-test",
+  protect,
+  userController.evaluationTest
+);
+// ============= Save Evaluation =============
+router.post(
+  "/save-evaluation",
+  protect,
+  userController.saveEvaluation
+);
 
 module.exports = router;
