@@ -4,6 +4,7 @@ const {
   existingEmail,
   titleCase,
   validatePhoto,
+  validateVideo,
 } = require("../helpers/validation.js");
 
 const register_user_validator = [
@@ -75,6 +76,7 @@ const update_user_validator = [
     .custom(validatePhoto)
     .withMessage("Photo is required with correct type"),
 ];
+
 const translate_validator = [
   body("language")
     .exists()
@@ -150,11 +152,31 @@ const add_update_question_validator = [
     .withMessage("answer cannot be empty"),
 ]
 
+const add_and_update_video_validator = [
+  body("title")
+    .exists()
+    .withMessage("Title is required")
+    .notEmpty()
+    .withMessage("Title cannot be empty")
+    .trim()
+    .customSanitizer(titleCase),
+  body("courseId")
+    .exists()
+    .withMessage("CourseId is required")
+    .notEmpty()
+    .withMessage("CourseId cannot be empty")
+    .trim(),
+  body("video")
+    .custom(validateVideo)
+    .withMessage("Video is required with correct type"),
+];
+
 module.exports = {
-  update_user_validator,
-  login_user_validator,
-  register_user_validator,
-  translate_validator,
-  add_update_course_validator,
-  add_update_question_validator
+  update_user_validator, // user
+  login_user_validator, // user
+  register_user_validator, // user
+  translate_validator, // translate
+  add_update_course_validator, // course 
+  add_update_question_validator, // question 
+  add_and_update_video_validator // video 
 };

@@ -86,13 +86,15 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found.",
+        field: 'email',
+        message: "User not found !",
       });
     }
 
     if (!user.activated) {
       return res.status(400).json({
         success: false,
+        field: 'email',
         message: "Check your email to active your account !",
       });
     }
@@ -104,7 +106,8 @@ const loginUser = async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        message: "Incorrect password.",
+        field: 'password',
+        message: "Incorrect password !",
       });
     }
     // Generate JWT token

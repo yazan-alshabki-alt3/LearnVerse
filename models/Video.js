@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 const VideoSchema = new mongoose.Schema(
     {
         title: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
-            ref: "User",
         },
         courseId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -15,6 +14,10 @@ const VideoSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        views: {
+            type: Number,
+            default: 0,
+        }
     },
     { timestamps: true }
 );

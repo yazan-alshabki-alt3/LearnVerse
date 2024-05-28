@@ -24,6 +24,28 @@ const validatePhoto = (value, { req }) => {
   }
   return true;
 };
+
+const validateVideo = (value, { req }) => {
+  if (req.files.length <= 0) {
+    return true;
+  }
+
+  const allowedVideoTypes = [
+    "video/mp4",
+    "video/webm",
+    "video/ogg",
+    "video/avi",
+    "video/mov",
+    "video/mkv"
+  ];
+
+  if (!allowedVideoTypes.includes(req.files[0].mimetype)) {
+    throw new Error("Invalid file type. Only MP4, WebM, OGG, AVI, MOV, and MKV video formats are allowed.");
+  }
+
+  return true;
+};
+
 const titleCase = async (name) => {
   return name
     ?.toLowerCase()
@@ -77,4 +99,5 @@ module.exports = {
   titleCase,
   validatePhoto,
   existingEmail,
+  validateVideo
 };
