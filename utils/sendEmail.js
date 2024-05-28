@@ -21,20 +21,20 @@ const HTML_TEMPLATE = ({ userName, code, userId }) => {
     }
     .brandSection {
       width: 100%;
-      background-color: #7c3e66;
+      background-color: #365486;
       padding: 30px;
       text-align: left;
     }
     .brand {
       width: 70%;
       font-size: 40px;
-      color: #f6f2f2;
+      color: #dcf2f1;
     }
     .content {
       padding: 5px;
       background-color: #fffaf4 !important;
-      color: #530554;
-      border: solid #7c3e66;
+      color: #0f1035;
+      border: solid #365486;
       font-size: large;
       line-height: 22pt;
     }
@@ -42,29 +42,29 @@ const HTML_TEMPLATE = ({ userName, code, userId }) => {
       border: none;
       border-radius: 5px;
       padding: 10px;
-      background-color: #7c3e66;
-      color: #f6f6f6;
+      background-color: #365486;
+      color: #dcf2f1;
       cursor: pointer;
     }
     .activate:hover {
       background-color: #ffe7cc;
-      color: #7c3e66;
+      color: #365486;
     }
     .details {
       width: 70%;
-      color: #530554;
+      color: #0f1035;
     }
     .center {
       text-align: center;
     }
     .ContentLabel {
-      color: #530554;
+      color: #0f1035;
       margin-top: 10px;
       font-weight: 900;
       font-size: larger;
     }
     .title{
-      color: #f6f6f6;
+      color: #dcf2f1;
     }
     td {
       padding: 15px;
