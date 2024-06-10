@@ -152,7 +152,7 @@ const add_update_question_validator = [
     .withMessage("answer cannot be empty"),
 ]
 
-const add_and_update_video_validator = [
+const add_video_validator = [
   body("title")
     .exists()
     .withMessage("Title is required")
@@ -171,6 +171,24 @@ const add_and_update_video_validator = [
     .withMessage("Video is required with correct type"),
 ];
 
+const update_video_validator = [
+  body("title")
+    .exists()
+    .withMessage("Title is required")
+    .notEmpty()
+    .withMessage("Title cannot be empty")
+    .trim(),
+  body("videoId")
+    .exists()
+    .withMessage("Video Id is required")
+    .notEmpty()
+    .withMessage("Video Id cannot be empty")
+    .trim(),
+  body("video")
+    .custom(validateVideo)
+    .withMessage("Video is required with correct type"),
+];
+
 module.exports = {
   update_user_validator, // user
   login_user_validator, // user
@@ -178,5 +196,6 @@ module.exports = {
   translate_validator, // translate
   add_update_course_validator, // course 
   add_update_question_validator, // question 
-  add_and_update_video_validator // video 
+  add_video_validator, // add video 
+  update_video_validator
 };

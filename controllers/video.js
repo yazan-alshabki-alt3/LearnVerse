@@ -58,79 +58,57 @@ const addVideo = async (req, res) => {
     }
 }
 
-//  ====================== Update Course ====================
+//  ====================== Update Video ====================
 
-const updateCourse = async (req, res) => {
-    const courseId = req.body.courseId;
-    const newCourse = {
-        name: req.body.name,
-        description: req.body.description,
-        level: req.body.level,
-    };
+const updateVideo = async (req, res) => {
+    const teacherId = req.user._id;
+    const title = req.body.title;
+    const videoId = req.body.videoId;
+    let url = null;
+    if (req.files.length > 0) {
+        const result = await cloudinary.uploader.upload(req.files[0].path, {
+            resource_type: "video",
+        });
+        url = result.secure_url;
+    }
     try {
-        const courseOwner = await Course.findById(courseId);
-        if (!courseOwner) {
+        const oldVideo = await Video.findById(videoId);
+        if (!oldVideo) {
             return res.status(404).json({
                 success: false,
-                message: `course not found !`,
+                message: "The video is not found !",
             });
         }
-        if (courseOwner.teacherId.toString() != req.user._id.toString()) {
+
+
+        const course = await Course.findById(oldVideo.courseId);
+
+        if (course.teacherId.toString() !== teacherId.toString()) {
             return res.status(400).json({
                 success: false,
-                message: "The course is not yours' !",
+                message: "The course is not yours' you can not update video !",
             });
         }
-        const course = await Course.findByIdAndUpdate(
-            courseId,
-            { $set: newCourse },
+        let newVideo;
+        if (url) {
+            newVideo = {
+                title: title,
+                url: url
+            };
+        } else {
+            newVideo = {
+                title: title,
+            };
+        }
+        const video = await Video.findByIdAndUpdate(
+            videoId,
+            { $set: newVideo },
             { new: true }
         );
-        const userData = {
-            _id: course._id,
-            name: course.name,
-            description: course.description,
-            level: course.level,
-            teacherId: course.teacherId,
-            createdAt: course.createdAt,
-            updatedAt: course.updatedAt,
-        };
         return res.status(201).json({
             success: true,
-            message: "Course Updated Successfully",
-            data: userData,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Something went wrong, try again later.",
-        });
-    }
-}
-
-//  ====================== Delete Course ====================
-
-const deleteCourse = async (req, res) => {
-    const courseId = req.params.id;
-    try {
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: `course not found !`,
-            });
-        }
-        const courseOwner = await Course.findById(courseId);
-        if (courseOwner.teacherId.toString() != req.user._id.toString()) {
-            return res.status(400).json({
-                success: false,
-                message: "The course is not yours' !",
-            });
-        }
-        let deleteCourse = await Course.findByIdAndDelete(courseId);
-        return res.status(200).json({
-            success: true,
-            message: `The course has deleted successfully !`,
+            message: "Video updated successfully !",
+            data: video,
         });
     } catch (err) {
         return res.status(500).json({
@@ -140,15 +118,48 @@ const deleteCourse = async (req, res) => {
     }
 }
 
-//  ====================== Get All Courses ====================
+//  ====================== Delete Video ====================
 
-const getAllCourses = async (req, res) => {
+const deleteVideo = async (req, res) => {
+    const videoId = req.params.id;
     try {
-        const courses = await Course.find();
+        const video = await Video.findById(videoId);
+        if (!video) {
+            return res.status(404).json({
+                success: false,
+                message: `video not found !`,
+            });
+        }
+        const courseOwner = await Course.findById(video.courseId);
+        if (courseOwner.teacherId.toString() != req.user._id.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: "The course is not yours' !",
+            });
+        }
+        let deleteVideo = await Video.findByIdAndDelete(videoId);
         return res.status(200).json({
             success: true,
-            message: `All courses in our website  `,
-            data: courses,
+            message: `The video has deleted successfully !`,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+}
+
+//  ====================== Get All Videos ====================
+
+const getAllVideos = async (req, res) => {
+    const courseId = req.params.id;
+    try {
+        const videos = await Video.find({ courseId: courseId });
+        return res.status(200).json({
+            success: true,
+            message: `All videos in this course  `,
+            data: videos,
         });
     } catch (err) {
         return res.status(500).json({
@@ -161,6 +172,8 @@ const getAllCourses = async (req, res) => {
 
 const videoController = {
     addVideo,
-
+    updateVideo,
+    deleteVideo,
+    getAllVideos
 };
 module.exports = videoController;
