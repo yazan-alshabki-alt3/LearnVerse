@@ -5,6 +5,7 @@ const {
   titleCase,
   validatePhoto,
   validateVideo,
+  existingCategory,
 } = require("../helpers/validation.js");
 
 const register_user_validator = [
@@ -30,6 +31,7 @@ const register_user_validator = [
     .isEmail()
     .withMessage("Email is not valid")
     .custom(existingEmail),
+
 
   body("password")
     .exists()
@@ -150,7 +152,9 @@ const add_update_question_validator = [
     .withMessage("answer is required")
     .notEmpty()
     .withMessage("answer cannot be empty"),
+
 ]
+
 
 const add_video_validator = [
   body("title")
@@ -160,6 +164,7 @@ const add_video_validator = [
     .withMessage("Title cannot be empty")
     .trim()
     .customSanitizer(titleCase),
+
   body("courseId")
     .exists()
     .withMessage("CourseId is required")
@@ -188,7 +193,90 @@ const update_video_validator = [
     .custom(validateVideo)
     .withMessage("Video is required with correct type"),
 ];
+const add_vocabulary_validator = [
+  body("A")
+    .exists()
+    .withMessage("A is required")
+    .notEmpty()
+    .withMessage("A cannot be empty"),
+  body("B")
+    .exists()
+    .withMessage("B is required")
+    .notEmpty()
+    .withMessage("B cannot be empty"),
+  body("C")
+    .exists()
+    .withMessage("C is required")
+    .notEmpty()
+    .withMessage("C cannot be empty"),
+  body("D")
+    .exists()
+    .withMessage("D is required")
+    .notEmpty()
+    .withMessage("D cannot be empty"),
+  body("answer")
+    .exists()
+    .withMessage("answer is required")
+    .notEmpty()
+    .withMessage("answer cannot be empty"),
+  body("categoryId")
+    .exists()
+    .withMessage("category Id is required")
+    .notEmpty()
+    .withMessage("category Id cannot be empty")
+    .trim(),
+  body("photo")
+    .custom(validatePhoto)
+    .withMessage("Photo is required with correct type"),
 
+]
+const update_vocabulary_validator = [
+  body("A")
+    .exists()
+    .withMessage("A is required")
+    .notEmpty()
+    .withMessage("A cannot be empty"),
+  body("B")
+    .exists()
+    .withMessage("B is required")
+    .notEmpty()
+    .withMessage("B cannot be empty"),
+  body("C")
+    .exists()
+    .withMessage("C is required")
+    .notEmpty()
+    .withMessage("C cannot be empty"),
+  body("D")
+    .exists()
+    .withMessage("D is required")
+    .notEmpty()
+    .withMessage("D cannot be empty"),
+  body("answer")
+    .exists()
+    .withMessage("answer is required")
+    .notEmpty()
+    .withMessage("answer cannot be empty"),
+  body("vocabularyId")
+    .exists()
+    .withMessage("vocabulary Id is required")
+    .notEmpty()
+    .withMessage("vocabulary Id cannot be empty")
+    .trim(),
+  body("photo")
+    .custom(validatePhoto)
+    .withMessage("Photo is required with correct type"),
+]
+
+const add_category_validator = [
+  body("name")
+    .exists()
+    .withMessage("name is required")
+    .notEmpty()
+    .withMessage("name cannot be empty")
+    .trim()
+    .customSanitizer(titleCase)
+    .custom(existingCategory),
+]
 module.exports = {
   update_user_validator, // user
   login_user_validator, // user
@@ -197,5 +285,8 @@ module.exports = {
   add_update_course_validator, // course 
   add_update_question_validator, // question 
   add_video_validator, // add video 
-  update_video_validator
+  update_video_validator, // update video
+  add_vocabulary_validator, // add vocabulary
+  update_vocabulary_validator, // update vocabulary
+  add_category_validator // add category
 };

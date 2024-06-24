@@ -5,6 +5,8 @@ const Question = require("../models/Question.js");
 const Grade = require("../models/Grade.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Category, Vocabulary } = require('../models/Category.js');
+
 const crypto = require("crypto");
 const authenticationWithGoogle = require("../utils/sendEmail.js");
 const resetThePasswordWithGoogle = require("../utils/resetPasswordEmail.js");
@@ -628,6 +630,24 @@ const saveEvaluation = async (req, res) => {
 
 
 
+//  ======================  Get All Category  ====================
+
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    return res.status(200).json({
+      success: true,
+      message: `All categories in our website  `,
+      data: categories,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+}
+
 const userController = {
   registerUser,
   loginUser,
@@ -645,6 +665,7 @@ const userController = {
   onlineTest,
   saveGrade,
   evaluationTest,
-  saveEvaluation
+  saveEvaluation,
+  getAllCategories
 };
 module.exports = userController;

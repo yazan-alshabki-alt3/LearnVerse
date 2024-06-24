@@ -89,4 +89,7 @@ router.post(
   userController.saveEvaluation
 );
 
+//  ======================  All Categories  ====================
+router.get("/categories", userController.getAllCategories);
+
 module.exports = router;

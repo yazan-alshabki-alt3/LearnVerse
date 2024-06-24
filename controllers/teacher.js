@@ -1,5 +1,11 @@
 const Question = require("../models/Question.js");
-
+const { Category, Vocabulary } = require('../models/Category.js');
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+});
 //  ======================  Add Question To The Bank  ====================
 
 const addQuestionToTheBank = async (req, res) => {
@@ -30,7 +36,6 @@ const addQuestionToTheBank = async (req, res) => {
             data: newQuestion,
         });
     } catch (err) {
-        console.log(err.message);
         return res.status(500).json({
             success: false,
             message: "Something went wrong, try again later.",
@@ -126,13 +131,227 @@ const removeQuestionFromTheBank = async (req, res) => {
     }
 }
 
+//  ======================  Add Vocabulary  ====================
+
+const addVocabulary = async (req, res) => {
+    const teacherId = req.user._id;
+    const A = req.body.A;
+    const B = req.body.B;
+    const C = req.body.C;
+    const D = req.body.D;
+    const answer = req.body.answer;
+    const categoryId = req.body.categoryId;
+
+    let url;
+    if (req.files.length > 0) {
+        const result = await cloudinary.uploader.upload(req.files[0].path, {
+            resource_type: "image",
+        });
+        url = result.secure_url;
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: "The file for photo is Empty !",
+        });
+    }
+    try {
+        let category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(201).json({
+                success: false,
+                message: "Category not Found !",
+            });
+        }
+
+        let newVocabulary = await new Vocabulary({
+            categoryId: categoryId,
+            teacherId: teacherId,
+            photo: url,
+            A: A,
+            B: B,
+            C: C,
+            D: D,
+            answer: answer
+        })
+        await newVocabulary.save();
+        category.vocabulary.push(newVocabulary);
+        await category.save();
+        return res.status(201).json({
+            success: true,
+            message: "Vocabulary add successfully !",
+            data: newVocabulary,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+
+}
+
+//  ======================  Update Vocabulary  ====================
+
+const updateVocabulary = async (req, res) => {
+
+    const vocabularyId = req.body.vocabularyId;
+    const A = req.body.A;
+    const B = req.body.B;
+    const C = req.body.C;
+    const D = req.body.D;
+    const answer = req.body.answer;
+    const userId = req.user._id;
+    let url = null;
+    if (req.files.length > 0) {
+        const result = await cloudinary.uploader.upload(req.files[0].path, {
+            resource_type: "image",
+        });
+        url = result.secure_url;
+    }
+    try {
+        const newVocabulary = await Vocabulary.findById(vocabularyId);
+
+        if (!newVocabulary) {
+            return res.status(404).json({
+                success: false,
+                message: "The vocabulary is not found !",
+            });
+        }
+
+        if (newVocabulary.teacherId.toString() !== userId.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: "The vocabulary is not yours' !",
+            });
+        }
+
+        newVocabulary.A = A;
+        newVocabulary.B = B;
+        newVocabulary.C = C;
+        newVocabulary.D = D;
+        newVocabulary.answer = answer;
+        if (url) { newVocabulary.photo = url; }
+        newVocabulary.save();
+        return res.status(201).json({
+            success: true,
+            message: "Vocabulary Updated Successfully",
+            data: newVocabulary,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+
+}
+
+//  ======================  Remove Vocabulary  ====================
+
+const removeVocabulary = async (req, res) => {
+    const vocabularyId = req.params.id;
+    const userId = req.user._id;
+
+    try {
+        const vocabulary = await Vocabulary.findById(vocabularyId);
+        if (!vocabulary) {
+            return res.status(404).json({
+                success: false,
+                message: `Vocabulary not found !`,
+            });
+        }
+        if (vocabulary.teacherId.toString() !== userId.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: "The vocabulary is not yours' !",
+            });
+        }
+        let category = await Category.findById(vocabulary.categoryId);
+        category.vocabulary = category.vocabulary.filter(function (value, index, arr) {
+            return value.toString() !== vocabularyId.toString();
+        });
+        await category.save();
+        let deleteVocabularyFromTheBank = await Vocabulary.findByIdAndDelete(vocabularyId);
+        return res.status(201).json({
+            success: true,
+            message: `The vocabulary has deleted successfully !`,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+}
 
 
+//  ======================  Add Category  ====================
+
+const addCategory = async (req, res) => {
+    const teacherId = req.user._id;
+    const name = req.body.name;
+
+    try {
+        const category = await Category.create({
+            teacherId: teacherId,
+            name: name
+        });
+        return res.status(201).json({
+            success: true,
+            message: "Category added successfully !",
+            data: category,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+
+}
+//  ======================  Remove Category  ====================
+
+const deleteCategory = async (req, res) => {
+    const categoryId = req.params.id;
+    const userId = req.user._id;
+
+    try {
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: `Category not found !`,
+            });
+        }
+        if (category.teacherId.toString() !== userId.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: "The category is not yours' !",
+            });
+        }
+        let deleteCategory = await Category.findByIdAndDelete(categoryId);
+        return res.status(201).json({
+            success: true,
+            message: `The category has deleted successfully !`,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+}
 
 const teacherController = {
     addQuestionToTheBank,
     removeQuestionFromTheBank,
-    updateQuestionInTheBank
+    updateQuestionInTheBank,
+    removeVocabulary,
+    updateVocabulary,
+    addVocabulary,
+    addCategory,
+    deleteCategory,
+
 
 };
 module.exports = teacherController;

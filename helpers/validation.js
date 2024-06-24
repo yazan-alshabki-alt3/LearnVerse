@@ -1,4 +1,5 @@
 const User = require("../models/User.js");
+const { Category, Vocabulary } = require('../models/Category.js');
 const { validationResult } = require("express-validator");
 const existingEmail = async (email) => {
   const check_email = await User.findOne({ email });
@@ -7,6 +8,14 @@ const existingEmail = async (email) => {
   }
   return true;
 };
+const existingCategory = async (category) => {
+  const check_category = await Category.findOne({ name: category });
+  if (check_category) {
+    throw new Error("Category already exist.");
+  }
+  return true;
+};
+
 const validatePhoto = (value, { req }) => {
   if (req.files.length <= 0) {
     return true;
@@ -99,5 +108,6 @@ module.exports = {
   titleCase,
   validatePhoto,
   existingEmail,
-  validateVideo
+  validateVideo,
+  existingCategory
 };
