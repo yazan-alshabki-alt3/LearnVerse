@@ -9,7 +9,6 @@ const courseRoutes = require("./routes/course.js");
 const dictionaryRoutes = require("./routes/dictionary.js");
 const loveRoutes = require("./routes/love.js");
 const subscribeRouts = require("./routes/subscribe.js");
-
 const videoRoutes = require("./routes/video.js");
 const grammarCheckerRoutes = require("./routes/grammarChecker.js");
 const cookieSession = require("cookie-session");

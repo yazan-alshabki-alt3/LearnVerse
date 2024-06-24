@@ -1,5 +1,6 @@
 const User = require("../models/User.js");
 const Token = require("../models/Token.js");
+const Otp = require("../models/Otp.js");
 const Order = require("../models/Order.js");
 const Question = require("../models/Question.js");
 const Grade = require("../models/Grade.js");
@@ -383,16 +384,16 @@ const forgotPassword = async (req, res) => {
         message: "User not found.",
       });
     }
-    const hashCode = crypto.randomBytes(32).toString("hex");
-    const newToken = await Token.create({
+    const otp = Math.floor(18726 + Math.random() * 80000);
+    const newToken = await Otp.create({
       userId: user._id,
-      token: hashCode,
+      otp: otp,
       createdAt: Date.now(),
     });
     await resetThePasswordWithGoogle(
       user.email,
       user.firstName,
-      hashCode,
+      otp,
       user._id
     );
     return res.status(201).json({
@@ -414,9 +415,9 @@ const resetPassword = async (req, res) => {
   let token = req.body.token;
   let newPassword = req.body.password;
   try {
-    let findToken = await Token.findOne({ userId: userId });
+    let findToken = await Otp.findOne({ userId: userId });
     if (findToken) {
-      const isValid = await bcrypt.compare(token, findToken.token);
+      const isValid = (findToken.otp.toString() === token.toString());
       if (isValid) {
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(newPassword, salt);
@@ -425,7 +426,7 @@ const resetPassword = async (req, res) => {
           { $set: { password: hashPassword } },
           { new: true }
         );
-        await Token.deleteOne({ _id: findToken._id });
+        await Otp.deleteOne({ _id: findToken._id });
 
         return res.status(201).json({
           success: true,
