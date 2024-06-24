@@ -7,6 +7,9 @@ const adminRoutes = require("./routes/admin.js");
 const teacherRoutes = require("./routes/teacher.js");
 const courseRoutes = require("./routes/course.js");
 const dictionaryRoutes = require("./routes/dictionary.js");
+const loveRoutes = require("./routes/love.js");
+const subscribeRouts = require("./routes/subscribe.js");
+
 const videoRoutes = require("./routes/video.js");
 const grammarCheckerRoutes = require("./routes/grammarChecker.js");
 const cookieSession = require("cookie-session");
@@ -71,6 +74,10 @@ app.use("/course", courseRoutes);
 app.use("/video", videoRoutes);
 // dictionary actions 
 app.use("/dictionary", dictionaryRoutes);
+// loves actions 
+app.use("/love", loveRoutes);
+// subscribes actions 
+app.use("/subscribe", subscribeRouts);
 
 
 
