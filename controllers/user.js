@@ -7,7 +7,6 @@ const Grade = require("../models/Grade.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Category, Vocabulary } = require('../models/Category.js');
-
 const crypto = require("crypto");
 const authenticationWithGoogle = require("../utils/sendEmail.js");
 const resetThePasswordWithGoogle = require("../utils/resetPasswordEmail.js");
@@ -649,6 +648,36 @@ const getAllCategories = async (req, res) => {
   }
 }
 
+
+
+//  ======================  Get Vocabulary In Specific Category  ====================
+
+const getVocabularyInSpecificCategory = async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: `Category not found !`,
+      });
+    }
+    const vocabularies = await Vocabulary.find({ categoryId: categoryId });
+    return res.status(200).json({
+      success: true,
+      message: `All vocabularies in this category  `,
+      data: vocabularies,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+}
+
+
+
 const userController = {
   registerUser,
   loginUser,
@@ -667,6 +696,7 @@ const userController = {
   saveGrade,
   evaluationTest,
   saveEvaluation,
-  getAllCategories
+  getAllCategories,
+  getVocabularyInSpecificCategory
 };
 module.exports = userController;

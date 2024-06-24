@@ -92,4 +92,8 @@ router.post(
 //  ======================  All Categories  ====================
 router.get("/categories", userController.getAllCategories);
 
+
+//  ======================  Get Vocabulary In Specific Category  ====================
+router.get("/vocabularies/:id", userController.getVocabularyInSpecificCategory);
+
 module.exports = router;
