@@ -135,14 +135,10 @@ const removeQuestionFromTheBank = async (req, res) => {
 
 const addVocabulary = async (req, res) => {
     const teacherId = req.user._id;
-    const A = req.body.A;
-    const B = req.body.B;
-    const C = req.body.C;
-    const D = req.body.D;
-    const answer = req.body.answer;
+    const text = req.body.text;
     const categoryId = req.body.categoryId;
 
-    let url;
+    let url = null;
     if (req.files.length > 0) {
         const result = await cloudinary.uploader.upload(req.files[0].path, {
             resource_type: "image",
@@ -157,21 +153,24 @@ const addVocabulary = async (req, res) => {
     try {
         let category = await Category.findById(categoryId);
         if (!category) {
-            return res.status(201).json({
+            return res.status(404).json({
                 success: false,
                 message: "Category not Found !",
             });
         }
+        let voc = await Vocabulary.find({ text: text });
 
+        if (voc.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Vocabulary is already exist !",
+            });
+        }
         let newVocabulary = await new Vocabulary({
             categoryId: categoryId,
             teacherId: teacherId,
             photo: url,
-            A: A,
-            B: B,
-            C: C,
-            D: D,
-            answer: answer
+            text: text
         })
         await newVocabulary.save();
         category.vocabulary.push(newVocabulary);
@@ -195,12 +194,9 @@ const addVocabulary = async (req, res) => {
 const updateVocabulary = async (req, res) => {
 
     const vocabularyId = req.body.vocabularyId;
-    const A = req.body.A;
-    const B = req.body.B;
-    const C = req.body.C;
-    const D = req.body.D;
-    const answer = req.body.answer;
+    const text = req.body.text;
     const userId = req.user._id;
+
     let url = null;
     if (req.files.length > 0) {
         const result = await cloudinary.uploader.upload(req.files[0].path, {
@@ -224,12 +220,14 @@ const updateVocabulary = async (req, res) => {
                 message: "The vocabulary is not yours' !",
             });
         }
-
-        newVocabulary.A = A;
-        newVocabulary.B = B;
-        newVocabulary.C = C;
-        newVocabulary.D = D;
-        newVocabulary.answer = answer;
+        let voc = await Vocabulary.find({ text: text });
+        if (voc.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Vocabulary is already exist !",
+            });
+        }
+        newVocabulary.text = text;
         if (url) { newVocabulary.photo = url; }
         newVocabulary.save();
         return res.status(201).json({
@@ -292,6 +290,15 @@ const addCategory = async (req, res) => {
     const name = req.body.name;
 
     try {
+        
+        let cat = await Category.find({ name: name });
+        if (cat.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Category is already exist !",
+            });
+        }
+
         const category = await Category.create({
             teacherId: teacherId,
             name: name

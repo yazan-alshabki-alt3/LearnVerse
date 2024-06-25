@@ -89,11 +89,20 @@ router.post(
   userController.saveEvaluation
 );
 
+
 //  ======================  All Categories  ====================
 router.get("/categories", userController.getAllCategories);
 
 
 //  ======================  Get Vocabulary In Specific Category  ====================
 router.get("/vocabularies/:id", userController.getVocabularyInSpecificCategory);
+
+//  ======================  Random Test Vocabulary In Specific Category  ====================
+router.post(
+  "/test-vocabulary",
+  protect,
+  userController.randomTestVocabularyInSpecificCategory
+);
+
 
 module.exports = router;

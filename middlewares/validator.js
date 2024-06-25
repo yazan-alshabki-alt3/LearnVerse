@@ -194,31 +194,12 @@ const update_video_validator = [
     .withMessage("Video is required with correct type"),
 ];
 const add_vocabulary_validator = [
-  body("A")
+
+  body("text")
     .exists()
-    .withMessage("A is required")
+    .withMessage("text is required")
     .notEmpty()
-    .withMessage("A cannot be empty"),
-  body("B")
-    .exists()
-    .withMessage("B is required")
-    .notEmpty()
-    .withMessage("B cannot be empty"),
-  body("C")
-    .exists()
-    .withMessage("C is required")
-    .notEmpty()
-    .withMessage("C cannot be empty"),
-  body("D")
-    .exists()
-    .withMessage("D is required")
-    .notEmpty()
-    .withMessage("D cannot be empty"),
-  body("answer")
-    .exists()
-    .withMessage("answer is required")
-    .notEmpty()
-    .withMessage("answer cannot be empty"),
+    .withMessage("text cannot be empty"),
   body("categoryId")
     .exists()
     .withMessage("category Id is required")
@@ -231,31 +212,12 @@ const add_vocabulary_validator = [
 
 ]
 const update_vocabulary_validator = [
-  body("A")
+
+  body("text")
     .exists()
-    .withMessage("A is required")
+    .withMessage("text is required")
     .notEmpty()
-    .withMessage("A cannot be empty"),
-  body("B")
-    .exists()
-    .withMessage("B is required")
-    .notEmpty()
-    .withMessage("B cannot be empty"),
-  body("C")
-    .exists()
-    .withMessage("C is required")
-    .notEmpty()
-    .withMessage("C cannot be empty"),
-  body("D")
-    .exists()
-    .withMessage("D is required")
-    .notEmpty()
-    .withMessage("D cannot be empty"),
-  body("answer")
-    .exists()
-    .withMessage("answer is required")
-    .notEmpty()
-    .withMessage("answer cannot be empty"),
+    .withMessage("text cannot be empty"),
   body("vocabularyId")
     .exists()
     .withMessage("vocabulary Id is required")

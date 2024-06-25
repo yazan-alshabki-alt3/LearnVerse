@@ -16,7 +16,7 @@ const { titleCase } = require("../helpers/validation.js");
 const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
-
+const { ObjectId } = require('mongoose').Types;
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
@@ -677,6 +677,51 @@ const getVocabularyInSpecificCategory = async (req, res) => {
 }
 
 
+//  ======================  Random Test Vocabulary In Specific Category  ====================
+
+const randomTestVocabularyInSpecificCategory = async (req, res) => {
+  let categoryId = req.body.categoryId;
+  categoryId = new ObjectId(categoryId);
+  try {
+    const randomVocabulary = await Vocabulary.aggregate([
+      { $match: { categoryId: categoryId } },
+      { $sample: { size: 10 } },
+    ]);
+
+    let test = [];
+    for (let i = 0; i < randomVocabulary.length; i++) {
+      const excludedItem = randomVocabulary[i]._id;
+      const randomVocabularyOptions = await Vocabulary.aggregate([
+        { $match: { categoryId: categoryId, _id: { $ne: excludedItem } } },
+        { $sample: { size: 3 } },
+      ]);
+      let options = [];
+      options.push({ text: randomVocabulary[i].text, isAnswer: true });
+      for (let j = 0; j < randomVocabularyOptions.length; j++) {
+        options.push({ text: randomVocabularyOptions[j].text, isAnswer: false });
+      }
+      options.sort(() => Math.random() - 0.5);
+      test.push({
+        photo: randomVocabulary[i].photo,
+        options: options
+      });
+
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Test vocabularies in this category `,
+      data: test,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, try again later.",
+    });
+  }
+}
+
 
 const userController = {
   registerUser,
@@ -697,6 +742,7 @@ const userController = {
   evaluationTest,
   saveEvaluation,
   getAllCategories,
-  getVocabularyInSpecificCategory
+  getVocabularyInSpecificCategory,
+  randomTestVocabularyInSpecificCategory
 };
 module.exports = userController;
