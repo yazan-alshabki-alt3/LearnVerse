@@ -228,6 +228,7 @@ const updateUser = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       userType: user.userType,
+      level: user.level,
       photo: user.photo,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
