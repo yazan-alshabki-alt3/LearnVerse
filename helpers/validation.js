@@ -29,7 +29,7 @@ const validatePhoto = (value, { req }) => {
     "image/svg+xml",
   ];
   if (!allowedImageTypes.includes(req.files[0].mimetype)) {
-    throw new Error("Invalid file type. Only JPEG and PNG are allowed.");
+    throw new Error("Invalid file type. Only JPEG , PNG , GIF , BMP , WEBP and SVG + XML are allowed.");
   }
   return true;
 };

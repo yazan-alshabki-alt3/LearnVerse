@@ -112,7 +112,10 @@ const add_update_course_validator = [
     .exists()
     .withMessage("Description is required")
     .notEmpty()
-    .withMessage("Description cannot be empty")
+    .withMessage("Description cannot be empty"),
+    body("photo")
+    .custom(validatePhoto)
+    .withMessage("Photo is required with correct type"),
 ]
 
 const add_update_question_validator = [

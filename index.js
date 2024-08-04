@@ -27,8 +27,8 @@ dotenv.config();
 // view engine
 app.use(cookieParser());
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
   cookieSession({

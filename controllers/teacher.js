@@ -6,6 +6,7 @@ cloudinary.config({
     api_key: process.env.API_KEY,
     api_secret: process.env.API_SECRET,
 });
+
 //  ======================  Add Question To The Bank  ====================
 
 const addQuestionToTheBank = async (req, res) => {
@@ -147,7 +148,7 @@ const addVocabulary = async (req, res) => {
     } else {
         return res.status(400).json({
             success: false,
-            message: "The file for photo is Empty !",
+            message: "The photo's file is Empty !",
         });
     }
     try {

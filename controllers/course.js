@@ -1,5 +1,11 @@
 const Course = require('../models/Course.js');
 
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+});
 //  ====================== Add Course ====================
 
 const addCourse = async (req, res) => {
@@ -8,12 +14,29 @@ const addCourse = async (req, res) => {
     const level = req.body.level;
     const description = req.body.description;
     try {
-        const course = await Course.create({
-            teacherId: teacherId,
-            name: name,
-            level: level,
-            description: description,
-        });
+        let course;
+        let url = null;
+        if (req.files.length > 0) {
+            const result = await cloudinary.uploader.upload(req.files[0].path, {
+                resource_type: "image",
+            });
+            url = result.secure_url;
+            course = await Course.create({
+                teacherId: teacherId,
+                name: name,
+                level: level,
+                description: description,
+                photo: url
+            });
+        } else {
+            course = await Course.create({
+                teacherId: teacherId,
+                name: name,
+                level: level,
+                description: description,
+            });
+        }
+
         return res.status(201).json({
             success: true,
             message: "Course created successfully !",
@@ -31,11 +54,27 @@ const addCourse = async (req, res) => {
 
 const updateCourse = async (req, res) => {
     const courseId = req.body.courseId;
-    const newCourse = {
-        name: req.body.name,
-        description: req.body.description,
-        level: req.body.level,
-    };
+    let url = null;
+    let newCourse;
+    if (req.files.length > 0) {
+        const result = await cloudinary.uploader.upload(req.files[0].path, {
+            resource_type: "image",
+        });
+        url = result.secure_url;
+        newCourse = {
+            name: req.body.name,
+            description: req.body.description,
+            level: req.body.level,
+            photo: url
+        };
+    } else {
+        newCourse = {
+            name: req.body.name,
+            description: req.body.description,
+            level: req.body.level,
+        };
+    }
+
     try {
         const courseOwner = await Course.findById(courseId);
         if (!courseOwner) {
@@ -55,11 +94,12 @@ const updateCourse = async (req, res) => {
             { $set: newCourse },
             { new: true }
         );
-        const userData = {
+        const courseData = {
             _id: course._id,
             name: course.name,
             description: course.description,
             level: course.level,
+            photo: course.photo,
             teacherId: course.teacherId,
             createdAt: course.createdAt,
             updatedAt: course.updatedAt,
@@ -67,7 +107,7 @@ const updateCourse = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Course Updated Successfully",
-            data: userData,
+            data: courseData,
         });
     } catch (error) {
         return res.status(500).json({
