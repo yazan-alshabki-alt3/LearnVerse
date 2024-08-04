@@ -45,8 +45,25 @@ const answerForTeacherPromotion = async (req, res) => {
         });
     }
 }
+const getAllPromotions = async (req, res) => {
+    try {
+        const promotions = await Order.find();
+        return res.status(201).json({
+            success: true,
+            message: `All promotions !`,
+            promotions: promotions
+        });
 
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong, try again later.",
+        });
+    }
+}
 const adminController = {
-    answerForTeacherPromotion
+    answerForTeacherPromotion,
+    getAllPromotions
 };
 module.exports = adminController;
