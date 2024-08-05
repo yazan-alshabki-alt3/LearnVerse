@@ -47,7 +47,7 @@ const answerForTeacherPromotion = async (req, res) => {
 }
 const getAllPromotions = async (req, res) => {
     try {
-        const promotions = await Order.find();
+        const promotions = await Order.find().populate('userId');
         return res.status(201).json({
             success: true,
             message: `All promotions !`,

@@ -153,7 +153,7 @@ const deleteCourse = async (req, res) => {
 
 const getAllCourses = async (req, res) => {
     try {
-        const courses = await Course.find();
+        const courses = await Course.find().populate("teacherId");
         return res.status(200).json({
             success: true,
             message: `All courses in our website  `,
