@@ -49,7 +49,7 @@ router.post("/search/name", protect, userController.getUsersByName);
 router.get("/login/:token/:id", userController.activateUser);
 
 // ============= Get All Users =============
-router.get("/all", protect, userController.getAllUsers);
+router.get("/all", userController.getAllUsers);
 
 // ============= Delete User Account =============
 router.delete("/delete/:id", protect, userController.deleteUser);
